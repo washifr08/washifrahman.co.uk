@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light dark">
+  <title>Washif Rahman</title>
+  <meta name="description" content="The personal website of Washif Rahman, currently under construction.">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📐</text></svg>">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;500&family=Barlow+Condensed:wght@500;600&display=swap">
+  <style>
+    /* Placeholder page styled like an architectural drawing sheet.
+       Light mode is a whiteprint; dark mode is a blueprint. */
+    :root {
+      --paper: #EEF2F6;
+      --ink: #243B8F;
+      --ink-muted: #56658F;
+      --red: #C62D2D;
+      --display: "Barlow Condensed", "Arial Narrow", "Roboto Condensed", sans-serif;
+      --body: "Barlow", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+    }
+
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --paper: #123A63;
+        --ink: #E4EEF9;
+        --ink-muted: #A6BEDA;
+        --red: #FF8F80;
+      }
+    }
+
+    *, *::before, *::after { box-sizing: border-box; }
+
+    html, body { height: 100%; }
+
+    body {
+      margin: 0;
+      padding: clamp(14px, 3vw, 32px);
+      background: var(--paper);
+      color: var(--ink);
+      font-family: var(--body);
+      font-size: 1.0625rem;
+      line-height: 1.5;
+    }
+
+    /* Sheet border: a heavy frame with a thin trim line outside it */
+    .sheet {
+      min-height: 100%;
+      display: grid;
+      grid-template-rows: 1fr auto;
+      gap: 3rem;
+      padding: clamp(1.5rem, 5vw, 4rem);
+      border: 2px solid var(--ink);
+      outline: 1px solid var(--ink);
+      outline-offset: 5px;
+    }
+
+    .drawing { align-self: center; }
+
+    .name {
+      margin: 0 0 clamp(2rem, 5vw, 3rem);
+      font-family: var(--display);
+      font-weight: 600;
+      font-size: clamp(4.25rem, 16vw, 10rem);
+      line-height: 0.88;
+    }
+
+    /* The status line gets a red revision cloud drawn around it (see the script) */
+    .status {
+      position: relative;
+      display: inline-block;
+      max-width: 100%;
+      margin: 0;
+      padding: 0.9rem 1.4rem;
+      font-size: clamp(1.15rem, 2.4vw, 1.4rem);
+      font-weight: 500;
+    }
+
+    .cloud {
+      position: absolute;
+      top: 0;
+      left: 0;
+      overflow: visible;
+      pointer-events: none;
+    }
+
+    .cloud path {
+      fill: none;
+      stroke: var(--red);
+      stroke-width: 1.75;
+      stroke-linejoin: round;
+    }
+
+    /* The revision triangle that labels the cloud */
+    .rev {
+      position: absolute;
+      top: -15px;
+      right: -13px;
+      width: 30px;
+      height: 27px;
+      overflow: visible;
+      opacity: 0;
+      transition: opacity 0.35s ease;
+    }
+
+    .is-drawn .rev { opacity: 1; }
+
+    .rev polygon {
+      fill: var(--paper);
+      stroke: var(--red);
+      stroke-width: 1.75;
+      stroke-linejoin: round;
+    }
+
+    .rev text {
+      fill: var(--red);
+      font-family: var(--display);
+      font-size: 13px;
+      font-weight: 600;
+      text-anchor: middle;
+    }
+
+    .note {
+      margin: 1.25rem 0 0;
+      color: var(--ink-muted);
+    }
+
+    /* Title block in the bottom-right corner, like on a real drawing */
+    .title-block {
+      justify-self: end;
+      width: min(100%, 22rem);
+      margin: 0;
+      border: 1.5px solid var(--ink);
+    }
+
+    .title-block div {
+      display: grid;
+      grid-template-columns: 6.5rem 1fr;
+      align-items: baseline;
+      border-top: 1px solid var(--ink);
+      background: linear-gradient(var(--ink), var(--ink)) 6.5rem 0 / 1px 100% no-repeat;
+    }
+
+    .title-block div:first-child { border-top: 0; }
+
+    .title-block dt {
+      padding: 0.4rem 0.7rem;
+      color: var(--ink-muted);
+      font-size: 0.8125rem;
+    }
+
+    .title-block dd {
+      margin: 0;
+      padding: 0.4rem 0.7rem;
+      font-family: var(--display);
+      font-size: 1.0625rem;
+      font-weight: 500;
+    }
+
+    @media (max-width: 520px) {
+      .title-block { justify-self: stretch; width: 100%; }
+    }
+
+    @media (min-width: 900px) {
+      .sheet {
+        grid-template-columns: 1fr auto;
+        grid-template-rows: 1fr;
+      }
+      .title-block { align-self: end; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .rev { transition: none; }
+    }
+  </style>
+</head>
+<body>
+  <main class="sheet">
+    <div class="drawing">
+      <h1 class="name">Washif<br>Rahman</h1>
+      <p class="status">
+        <svg class="cloud" aria-hidden="true" focusable="false"><path/></svg>
+        This site is under construction.
+        <svg class="rev" viewBox="0 0 30 27" aria-hidden="true" focusable="false">
+          <polygon points="15,1.5 28.5,25.5 1.5,25.5"/>
+          <text x="15" y="22">A</text>
+        </svg>
+      </p>
+      <p class="note">Check back soon.</p>
+    </div>
+
+    <dl class="title-block">
+      <div><dt>Project</dt><dd>washifrahman.co.uk</dd></div>
+      <div><dt>Status</dt><dd>In progress</dd></div>
+      <div><dt>Hosted on</dt><dd>Oracle Cloud, London</dd></div>
+      <div><dt>Revision</dt><dd>A, September 2026</dd></div>
+    </dl>
+  </main>
+
+  <script>
+    // Draws a revision cloud (the scalloped outline architects use to mark changes)
+    // around the status line, and redraws it whenever the line changes size.
+    (function () {
+      var box = document.querySelector('.status');
+      var svg = box.querySelector('.cloud');
+      var path = svg.querySelector('path');
+      var reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      var lastW = 0, lastH = 0;
+
+      // Builds the outline from arcs that bulge outwards along each edge
+      function cloudPath(w, h) {
+        var x0 = 1, y0 = 1, x1 = w - 1, y1 = h - 1;
+        var nx = Math.max(2, Math.round((x1 - x0) / 26));
+        var ny = Math.max(1, Math.round((y1 - y0) / 26));
+        var sx = (x1 - x0) / nx, sy = (y1 - y0) / ny;
+        var rx = (sx * 0.62).toFixed(2), ry = (sy * 0.62).toFixed(2);
+        var d = 'M' + x0 + ',' + y0;
+        var i;
+        for (i = 1; i <= nx; i++) d += ' A' + rx + ',' + rx + ' 0 0 1 ' + (x0 + i * sx).toFixed(2) + ',' + y0;
+        for (i = 1; i <= ny; i++) d += ' A' + ry + ',' + ry + ' 0 0 1 ' + x1 + ',' + (y0 + i * sy).toFixed(2);
+        for (i = 1; i <= nx; i++) d += ' A' + rx + ',' + rx + ' 0 0 1 ' + (x1 - i * sx).toFixed(2) + ',' + y1;
+        for (i = 1; i <= ny; i++) d += ' A' + ry + ',' + ry + ' 0 0 1 ' + x0 + ',' + (y1 - i * sy).toFixed(2);
+        return d + ' Z';
+      }
+
+      function draw(animate) {
+        var w = box.offsetWidth, h = box.offsetHeight;
+        lastW = w;
+        lastH = h;
+        svg.setAttribute('width', w);
+        svg.setAttribute('height', h);
+        svg.setAttribute('viewBox', '0 0 ' + w + ' ' + h);
+        path.setAttribute('d', cloudPath(w, h));
+
+        if (animate && !reduceMotion) {
+          var len = path.getTotalLength();
+          path.style.transition = 'none';
+          path.style.strokeDasharray = len;
+          path.style.strokeDashoffset = len;
+          path.getBoundingClientRect(); // apply the starting state before animating
+          path.style.transition = 'stroke-dashoffset 1.4s cubic-bezier(0.65, 0, 0.35, 1)';
+          path.style.strokeDashoffset = 0;
+          setTimeout(function () { box.classList.add('is-drawn'); }, 1300);
+        } else {
+          path.style.transition = 'none';
+          path.style.strokeDasharray = 'none';
+          path.style.strokeDashoffset = 0;
+          box.classList.add('is-drawn');
+        }
+      }
+
+      // Wait for the web fonts so the cloud is measured around the final text size
+      var fontsReady = document.fonts ? document.fonts.ready : Promise.resolve();
+      fontsReady.then(function () {
+        draw(true);
+        if ('ResizeObserver' in window) {
+          new ResizeObserver(function () {
+            if (box.offsetWidth !== lastW || box.offsetHeight !== lastH) draw(false);
+          }).observe(box);
+        }
+      });
+    })();
+  </script>
+</body>
+</html>
