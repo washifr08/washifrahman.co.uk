@@ -1,0 +1,488 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>This website | Washif Rahman</title>
+  <meta name="description" content="How I built and host washifrahman.co.uk on Oracle Cloud's free tier, behind Cloudflare, with automatic HTTPS and deployments.">
+  <meta name="color-scheme" content="light">
+  <meta name="theme-color" content="#8B9EB7">
+  <meta property="og:type" content="article">
+  <meta property="og:title" content="This website | Washif Rahman">
+  <meta property="og:description" content="How I built and host washifrahman.co.uk on Oracle Cloud's free tier, behind Cloudflare, with automatic HTTPS and deployments.">
+  <meta property="og:url" content="https://washifrahman.co.uk/projects/website.html">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>☁️</text></svg>">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=Instrument+Sans:wght@400;500;600&display=swap">
+  <style>
+    :root {
+      --frame: #8B9EB7;         /* light blue background around the page */
+      --page: #E8EDF4;          /* main page */
+      --hero: #16284D;          /* same navy as this project's card, so the transition lands seamlessly */
+      --navy: #0E1A33;
+      --gold: #D4B07A;
+      --gold-line: #D8C29A;
+      --orange: #DB6A2B;        /* this project's colour, as on its card */
+      --orange-strong: #C0561C;
+      --orange-deep: #A34A16;
+      --orange-soft: #FCEBDD;
+      --node: #D7E0EC;          /* diagram boxes */
+      --node-line: #B7C4D6;
+
+      --text: #0E1A33;
+      --text-soft: #4B5670;
+      --text-muted: #5A6479;
+      --text-light: #F4F7FA;
+      --text-light-soft: #C5D3DC;
+
+      --serif: "DM Serif Display", Georgia, "Times New Roman", serif;
+      --sans: "Instrument Sans", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+      --ease-out: cubic-bezier(0.2, 0.7, 0.1, 1);
+      --gap: clamp(10px, 1.8vw, 22px);
+      --pad-x: clamp(1.5rem, 6vw, 5rem);
+    }
+
+    *, *::before, *::after { box-sizing: border-box; }
+
+    html { background: var(--frame); -webkit-text-size-adjust: 100%; }
+
+    body {
+      margin: 0;
+      padding: var(--gap);
+      background: var(--frame);
+      color: var(--text);
+      font-family: var(--sans);
+      font-size: 1.0625rem;
+      line-height: 1.65;
+    }
+
+    ::selection { background: var(--gold); color: var(--navy); }
+
+    .page {
+      max-width: 1240px;
+      margin-inline: auto;
+      border-radius: 28px;
+      overflow: hidden;
+      background: var(--page);
+    }
+
+    /* ---------- Back link ---------- */
+
+    .back-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+      color: inherit;
+      font-size: 0.95rem;
+      font-weight: 500;
+      text-decoration: none;
+    }
+
+    .back-link svg { width: 18px; height: 18px; }
+
+    .back-link:hover span { text-decoration: underline; text-underline-offset: 0.2em; }
+
+    a:focus-visible {
+      outline: 2px solid var(--gold);
+      outline-offset: 4px;
+      border-radius: 6px;
+    }
+
+    /* ---------- Hero ---------- */
+
+    .hero {
+      padding: clamp(1.5rem, 3vw, 2.25rem) var(--pad-x) clamp(3rem, 6vw, 4.5rem);
+      background: var(--hero);
+      color: var(--text-light);
+    }
+
+    .hero .back-link { color: var(--text-light-soft); }
+
+    .hero h1 {
+      margin: clamp(2.5rem, 6vw, 4rem) 0 0;
+      font-family: var(--serif);
+      font-weight: 400;
+      font-size: clamp(3rem, 8vw, 5.75rem);
+      line-height: 0.95;
+    }
+
+    .hero-lead {
+      max-width: 60ch;
+      margin: 1.25rem 0 0;
+      color: var(--text-light-soft);
+      font-size: clamp(1.0625rem, 1.5vw, 1.2rem);
+    }
+
+    .hero-stats {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 1.5rem;
+      max-width: 820px;
+      margin: clamp(2rem, 4vw, 3rem) 0 0;
+      padding-top: 1.5rem;
+      border-top: 1px solid rgba(212, 176, 122, 0.45);
+    }
+
+    .hero-stats div { display: flex; flex-direction: column-reverse; justify-content: flex-end; }
+
+    .hero-stats dd {
+      margin: 0;
+      color: #F2A06A;
+      font-family: var(--serif);
+      font-size: clamp(2rem, 4vw, 2.5rem);
+      line-height: 1.05;
+    }
+
+    .hero-stats dt {
+      margin-top: 0.3rem;
+      color: var(--text-light-soft);
+      font-size: 0.875rem;
+      line-height: 1.35;
+    }
+
+    @media (min-width: 720px) {
+      .hero-stats { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+    }
+
+    /* ---------- Content ---------- */
+
+    .content { padding: clamp(2.5rem, 6vw, 4.5rem) var(--pad-x) clamp(2.5rem, 6vw, 4rem); }
+
+    .content section { max-width: 1000px; }
+
+    .content section + section {
+      margin-top: clamp(2.75rem, 6vw, 4rem);
+      padding-top: clamp(2.75rem, 6vw, 4rem);
+      border-top: 1px solid var(--gold-line);
+    }
+
+    .content h2 {
+      margin: 0 0 1rem;
+      font-family: var(--serif);
+      font-weight: 400;
+      font-size: clamp(1.9rem, 4vw, 2.5rem);
+      line-height: 1.1;
+    }
+
+    .content p {
+      max-width: 68ch;
+      margin: 0 0 1rem;
+      color: var(--text-soft);
+    }
+
+    .content p:last-child { margin-bottom: 0; }
+
+    .content h3 {
+      margin: 0 0 0.3rem;
+      font-size: 1.125rem;
+      font-weight: 600;
+      line-height: 1.35;
+    }
+
+    /* Request path diagram: across on wide screens, down on phones */
+    .flow {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 1.75rem;
+      margin: 2rem 0 0;
+      padding: 0;
+      list-style: none;
+    }
+
+    .flow li {
+      position: relative;
+      padding: 0.9rem 1rem;
+      border: 1px solid var(--node-line);
+      border-radius: 12px;
+      background: var(--node);
+    }
+
+    .flow strong { display: block; font-weight: 600; line-height: 1.3; }
+
+    .flow span { display: block; margin-top: 0.15rem; color: var(--text-muted); font-size: 0.875rem; }
+
+    .flow .flow-cloudflare { border-color: var(--orange); background: var(--orange); color: var(--text-light); }
+    .flow .flow-cloudflare span { color: #FFE3D1; }
+    .flow .flow-nginx { border-color: var(--hero); background: var(--hero); color: var(--text-light); }
+    .flow .flow-nginx span { color: var(--text-light-soft); }
+
+    /* Chevrons between the steps */
+    .flow li:not(:last-child)::after {
+      content: "";
+      position: absolute;
+      left: 50%;
+      bottom: -1.2rem;
+      width: 9px;
+      height: 9px;
+      border-right: 2px solid var(--text-muted);
+      border-bottom: 2px solid var(--text-muted);
+      transform: translateX(-50%) rotate(45deg);
+    }
+
+    @media (min-width: 900px) {
+      .flow { grid-template-columns: repeat(5, minmax(0, 1fr)); }
+      .flow li:not(:last-child)::after {
+        top: 50%;
+        right: -1.15rem;
+        bottom: auto;
+        left: auto;
+        transform: translateY(-50%) rotate(-45deg);
+      }
+    }
+
+    /* Build steps */
+    .steps {
+      display: grid;
+      gap: 1.6rem;
+      margin: 1.75rem 0 0;
+      padding: 0;
+      list-style: none;
+      counter-reset: step;
+    }
+
+    .steps li {
+      display: grid;
+      grid-template-columns: 2.5rem 1fr;
+      column-gap: 1rem;
+      counter-increment: step;
+    }
+
+    .steps li::before {
+      content: counter(step);
+      color: var(--orange-strong);
+      font-family: var(--serif);
+      font-size: 1.9rem;
+      line-height: 1;
+    }
+
+    .steps p { margin: 0; }
+
+    @media (min-width: 900px) {
+      .steps { grid-template-columns: repeat(2, minmax(0, 1fr)); column-gap: 3rem; }
+    }
+
+    /* Problems */
+    .problems { display: grid; gap: 1.75rem; margin-top: 1.75rem; }
+
+    .problems p { margin: 0; }
+
+    @media (min-width: 900px) {
+      .problems { grid-template-columns: repeat(3, minmax(0, 1fr)); column-gap: 2.5rem; }
+    }
+
+    /* Tools */
+    .tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      margin: 1.25rem 0 0;
+      padding: 0;
+      list-style: none;
+    }
+
+    .tags li {
+      padding: 0.3rem 0.8rem;
+      border-radius: 999px;
+      background: var(--orange-soft);
+      color: var(--orange-deep);
+      font-size: 0.875rem;
+      font-weight: 500;
+    }
+
+    /* ---------- Footer ---------- */
+
+    .page-footer {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: center;
+      gap: 0.75rem 1.5rem;
+      padding: 1.5rem var(--pad-x) 2rem;
+      border-top: 1px solid var(--gold-line);
+      color: var(--text-muted);
+      font-size: 0.9rem;
+    }
+
+    .page-footer .back-link { color: var(--text); }
+
+    .page-footer p { margin: 0; }
+
+    /* ---------- Arriving from the homepage card ---------- */
+
+    /* A cover in the card's colour fades away to reveal the page */
+    .page-cover {
+      position: fixed;
+      inset: 0;
+      z-index: 1000;
+      background: var(--hero);
+      pointer-events: none;
+    }
+
+    @media (prefers-reduced-motion: no-preference) {
+      .page-cover { animation: cover-out 0.6s ease 0.05s both; }
+      .hero > * { animation: rise-in 0.8s var(--ease-out) 0.25s both; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .page-cover { display: none; }
+    }
+
+    @keyframes cover-out {
+      to { opacity: 0; visibility: hidden; }
+    }
+
+    @keyframes rise-in {
+      from { opacity: 0; transform: translateY(12px); }
+      to { opacity: 1; transform: none; }
+    }
+  </style>
+</head>
+<body>
+  <div class="page-cover" aria-hidden="true"></div>
+
+  <div class="page">
+    <header class="hero">
+      <a class="back-link" href="../index.html#projects">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="15 6 9 12 15 18"/></svg>
+        <span>Back to home</span>
+      </a>
+
+      <h1>This website</h1>
+      <p class="hero-lead">I set up everything behind this site myself, from the domain name and the cloud server to the firewalls, the security certificates and the way updates go live. It runs on Oracle Cloud's free tier, so it costs nothing to keep online.</p>
+
+      <dl class="hero-stats">
+        <div><dt>Monthly hosting cost</dt><dd>£0</dd></div>
+        <div><dt>Days to build and launch</dt><dd>9</dd></div>
+        <div><dt>Firewall layers</dt><dd>2</dd></div>
+        <div><dt>From a GitHub push to live</dt><dd>1 min</dd></div>
+      </dl>
+    </header>
+
+    <main class="content">
+      <section aria-labelledby="what-it-is">
+        <h2 id="what-it-is">What it is</h2>
+        <p>This website is my portfolio, but it is also a project in its own right. Rather than using a website builder, I decided to put it online the way a company would, which meant renting a server in the cloud, pointing a domain at it, securing it and working out how to update it. Whilst this took far longer than dragging and dropping a template, it forced me to understand how each piece works and how they all connect, which is exactly what I want to learn as someone interested in cloud architecture.</p>
+      </section>
+
+      <section aria-labelledby="request-path">
+        <h2 id="request-path">How a visit reaches the page</h2>
+        <p>When someone types washifrahman.co.uk into their browser, the request goes to Cloudflare first, which handles it at its nearest data centre and then passes it on to my server in Oracle Cloud's London region. Before it reaches the server, the request has to get through two firewalls, one in Oracle's network and one on the server itself, and only then does Nginx, the web server software, send back the page.</p>
+
+        <ol class="flow">
+          <li><strong>Visitor</strong><span>Types the address</span></li>
+          <li class="flow-cloudflare"><strong>Cloudflare</strong><span>Nearest data centre</span></li>
+          <li><strong>Oracle security list</strong><span>First firewall</span></li>
+          <li><strong>Server firewall</strong><span>iptables, on the server</span></li>
+          <li class="flow-nginx"><strong>Nginx</strong><span>Sends back the page</span></li>
+        </ol>
+      </section>
+
+      <section aria-labelledby="how-i-built-it">
+        <h2 id="how-i-built-it">How I built it</h2>
+        <p>Below I have listed the main stages in the order I worked through them.</p>
+
+        <ol class="steps">
+          <li>
+            <div>
+              <h3>Registering the domain</h3>
+              <p>I bought washifrahman.co.uk through names.co.uk, and later moved its DNS, which is essentially the internet's address book, over to Cloudflare.</p>
+            </div>
+          </li>
+          <li>
+            <div>
+              <h3>Creating the server</h3>
+              <p>I created an Always Free virtual machine on Oracle Cloud Infrastructure in London, running Ubuntu Linux, along with the virtual cloud network, public subnet and internet gateway it needs to reach the internet. I manage it over SSH with a key pair rather than a password.</p>
+            </div>
+          </li>
+          <li>
+            <div>
+              <h3>Opening the right ports</h3>
+              <p>I opened only the ports the site needs, in both Oracle's security list and the server's own iptables firewall.</p>
+            </div>
+          </li>
+          <li>
+            <div>
+              <h3>Serving the site</h3>
+              <p>Nginx serves the site's files, and I configured it to refuse requests for the hidden Git folder, so the project's history is never exposed.</p>
+            </div>
+          </li>
+          <li>
+            <div>
+              <h3>Adding HTTPS</h3>
+              <p>The site uses free Let's Encrypt certificates, which only last 90 days, so Certbot renews them automatically. It proves I own the domain by adding a temporary DNS record through a Cloudflare API token that can only edit this one domain.</p>
+            </div>
+          </li>
+          <li>
+            <div>
+              <h3>Putting Cloudflare in front</h3>
+              <p>Visitors connect to Cloudflare rather than to my server directly, and the connection is encrypted on both legs, from the visitor to Cloudflare and from Cloudflare to my server.</p>
+            </div>
+          </li>
+          <li>
+            <div>
+              <h3>Automating deployments</h3>
+              <p>The site's code lives on GitHub, and a script on the server checks for changes every minute, so anything I push goes live within about a minute without me needing to log in.</p>
+            </div>
+          </li>
+          <li>
+            <div>
+              <h3>Setting up email</h3>
+              <p>Emails sent to my domain are forwarded to my inbox using Cloudflare Email Routing.</p>
+            </div>
+          </li>
+        </ol>
+      </section>
+
+      <section aria-labelledby="security">
+        <h2 id="security">Keeping it secure</h2>
+        <p>Once everything was working, I locked the server down so that it only accepts web traffic from Cloudflare's published IP ranges, which means nobody can get around Cloudflare by visiting the server's address directly, and I limited SSH access to my own IP address.</p>
+        <p>I also chose to have the server pull updates from GitHub, rather than letting GitHub log in and push them, because it meant I did not need to open any extra ports. The cost of this decision is a wait of up to a minute before changes appear, which I consider a fair trade for a server that accepts fewer connections.</p>
+      </section>
+
+      <section aria-labelledby="problems">
+        <h2 id="problems">Problems I ran into</h2>
+
+        <div class="problems">
+          <div>
+            <h3>The wrong system image</h3>
+            <p>My first attempt at creating the server failed because I had chosen an Ubuntu image built for ARM processors, whilst the free server I had picked runs on an AMD processor, so I had to switch to the matching x86 image.</p>
+          </div>
+          <div>
+            <h3>Firewall rules in the wrong order</h3>
+            <p>Even after opening the web ports, the site still would not load, and I eventually realised that iptables reads its rules from top to bottom, and my new rules had been added below the one that rejects everything else.</p>
+          </div>
+          <div>
+            <h3>Old DNS records</h3>
+            <p>After locking the server down, the site stopped loading on my own laptop whilst working everywhere else. My broadband provider was still handing out the server's old address from before the move to Cloudflare, which my new firewall rules were correctly blocking, and it sorted itself out once the provider's cached records expired.</p>
+          </div>
+        </div>
+      </section>
+
+      <section aria-labelledby="tools">
+        <h2 id="tools">Tools I used</h2>
+        <ul class="tags">
+          <li>Oracle Cloud (OCI)</li>
+          <li>Ubuntu</li>
+          <li>Nginx</li>
+          <li>Cloudflare</li>
+          <li>Let's Encrypt</li>
+          <li>Certbot</li>
+          <li>Git</li>
+          <li>GitHub</li>
+          <li>Bash</li>
+          <li>cron</li>
+        </ul>
+      </section>
+    </main>
+
+    <footer class="page-footer">
+      <a class="back-link" href="../index.html#projects">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="15 6 9 12 15 18"/></svg>
+        <span>Back to home</span>
+      </a>
+      <p>© 2026 Washif Rahman</p>
+    </footer>
+  </div>
+</body>
+</html>

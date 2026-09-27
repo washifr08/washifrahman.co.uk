@@ -214,6 +214,48 @@
       line-height: 1.35;
     }
 
+    /* Clickable cards: the title link stretches invisibly over the whole card */
+    .project--link { position: relative; }
+
+    .project-link { color: inherit; text-decoration: none; }
+
+    .project-link::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      z-index: 1;
+    }
+
+    .project--link .thumb { transition: transform 0.35s var(--ease-out); }
+
+    .project--link:hover .thumb { transform: translateY(-4px); }
+
+    .project--link:hover .project-link {
+      text-decoration: underline;
+      text-decoration-thickness: 1.5px;
+      text-underline-offset: 0.18em;
+    }
+
+    .project-link:focus-visible { outline: none; }
+
+    .project--link:has(.project-link:focus-visible) {
+      outline: 2px solid var(--gold);
+      outline-offset: 8px;
+      border-radius: 20px;
+    }
+
+    /* Card-to-page transition: the clicked picture grows to fill the screen whilst fading */
+    .page-transition {
+      position: fixed;
+      inset: 0;
+      z-index: 1000;
+      pointer-events: none;
+    }
+
+    .page-transition .art { position: absolute; }
+
+    .page-transition .art svg { display: block; width: 100%; height: 100%; }
+
     /* Project colours: orange for this website, green for the macro tracker */
     .project--site { --tint: #FCEBDD; --tint-text: #A34A16; --figure: #C0561C; }
     .project--gym  { --tint: #D6ECDF; --tint-text: #1F6445; --figure: #2A7A55; }
@@ -482,7 +524,7 @@
         <p class="intro">Hello, I'm Washif, a Year 13 student currently sitting A Levels in Computer Science, Maths and Further Maths. Whilst I study, I'm building real projects to learn how the cloud works in practice, including this website, which runs on my own Oracle Cloud server. If you want to reach out to me about anything, this will be possible at the bottom of the page!</p>
       </header>
 
-      <section class="projects" aria-labelledby="projects-title">
+      <section class="projects" id="projects" aria-labelledby="projects-title">
         <div class="scroll-cue" aria-hidden="true">
           <span>Scroll down to see more</span>
           <span class="arrow-circle">
@@ -494,7 +536,7 @@
 
         <ul class="project-list">
           <!-- Project 1: this website -->
-          <li class="project project--site">
+          <li class="project project--site project--link">
             <div class="thumb" aria-hidden="true">
               <svg viewBox="0 0 320 200" preserveAspectRatio="xMidYMid slice">
                 <rect width="320" height="200" fill="#16284D"/>
@@ -512,7 +554,7 @@
               </svg>
             </div>
             <div>
-              <h3>This website</h3>
+              <h3><a class="project-link" href="projects/website.html" data-cover="#16284D">This website</a></h3>
               <p>I built and deployed this site myself. It runs on Oracle Cloud's Always Free tier in London, sits behind Cloudflare, and renews its HTTPS certificate automatically.</p>
               <dl class="stats">
                 <div><dt>Monthly hosting cost</dt><dd>£0</dd></div>
@@ -529,7 +571,7 @@
           </li>
 
           <!-- Project 2: macro-nutritional tracker for a local gym -->
-          <li class="project project--gym">
+          <li class="project project--gym project--link">
             <div class="thumb" aria-hidden="true">
               <svg viewBox="0 0 320 200" preserveAspectRatio="xMidYMid slice">
                 <rect width="320" height="200" fill="#2F7A57"/>
@@ -572,7 +614,7 @@
               </svg>
             </div>
             <div>
-              <h3>Software for a local gym</h3>
+              <h3><a class="project-link" href="projects/macro-tracker.html" data-cover="#2F7A57">Software for a local gym</a></h3>
               <p>A macro-nutritional tracker, written in Python with an integrated database, which I built for the manager of a local gym in summer 2025.</p>
               <dl class="stats">
                 <div><dt>People reached</dt><dd>20–30</dd></div>
@@ -689,6 +731,30 @@
         }, 1480);
       }
 
+      // Coming back from a project page: go straight to the projects instead of the top
+      var nav = performance.getEntriesByType ? performance.getEntriesByType('navigation')[0] : null;
+      var savedScroll = null;
+      try { savedScroll = sessionStorage.getItem('homeScroll'); } catch (e) {}
+
+      function showProjectsNow(scrollTarget) {
+        started = true;
+        cue.hidden = true;
+        projects.classList.add('is-revealed');
+        window.scrollTo(0, scrollTarget);
+      }
+
+      if (location.hash === '#projects') {
+        // Arrived from a "Back to home" link: show the projects, then tidy the address so a refresh still opens at the top
+        try { history.replaceState(null, '', location.pathname); } catch (e) {}
+        showProjectsNow(projects.getBoundingClientRect().top + window.scrollY - 24);
+        return;
+      }
+
+      if (nav && nav.type === 'back_forward' && savedScroll !== null) {
+        showProjectsNow(parseInt(savedScroll, 10) || 0);
+        return;
+      }
+
       // Always start from the very top; wait two frames so this reset doesn't count as the visitor scrolling
       if (window.scrollY > 0) {
         window.scrollTo(0, 0);
@@ -696,6 +762,70 @@
       } else {
         listen();
       }
+    })();
+
+    // Clicking a project card: its picture grows to fill the screen whilst fading, then the project page opens
+    (function () {
+      var reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      var overlay = null;
+
+      document.querySelectorAll('.project-link').forEach(function (link) {
+        link.addEventListener('click', function (event) {
+          // Ctrl, Cmd, Shift and Alt clicks open new tabs or windows as normal
+          if (event.button !== 0 || event.ctrlKey || event.metaKey || event.shiftKey || event.altKey) return;
+
+          // Remember where the visitor was, so the back button returns them to the projects
+          try { sessionStorage.setItem('homeScroll', String(window.scrollY)); } catch (e) {}
+
+          if (reduceMotion || overlay) return;
+
+          var thumb = link.closest('.project').querySelector('.thumb');
+          var rect = thumb.getBoundingClientRect();
+          var href = link.href;
+          event.preventDefault();
+
+          overlay = document.createElement('div');
+          overlay.className = 'page-transition';
+          overlay.style.background = link.getAttribute('data-cover');
+
+          var art = document.createElement('div');
+          art.className = 'art';
+          art.style.left = rect.left + 'px';
+          art.style.top = rect.top + 'px';
+          art.style.width = rect.width + 'px';
+          art.style.height = rect.height + 'px';
+          art.appendChild(thumb.querySelector('svg').cloneNode(true));
+          overlay.appendChild(art);
+          document.body.appendChild(overlay);
+
+          var start = 'inset(' + rect.top + 'px ' + (window.innerWidth - rect.right) + 'px ' +
+                      (window.innerHeight - rect.bottom) + 'px ' + rect.left + 'px round 16px)';
+
+          function go() { window.location.href = href; }
+
+          try {
+            var grow = overlay.animate(
+              [{ clipPath: start }, { clipPath: 'inset(0px 0px 0px 0px round 0px)' }],
+              { duration: 650, easing: 'cubic-bezier(0.65, 0, 0.35, 1)', fill: 'forwards' }
+            );
+            art.animate(
+              [{ opacity: 1, transform: 'scale(1)' }, { opacity: 0, transform: 'scale(1.12)' }],
+              { duration: 450, easing: 'ease-out', fill: 'forwards' }
+            );
+            grow.finished.then(go, go);
+          } catch (e) {
+            go();
+          }
+        });
+      });
+
+      // The back button can restore this page exactly as it was left, so remove the finished transition
+      window.addEventListener('pageshow', function (event) {
+        if (event.persisted && overlay) {
+          overlay.remove();
+          overlay = null;
+        }
+      });
     })();
 
     // Links still pointing at "#" are placeholders: hide them from keyboard and screen readers until filled in

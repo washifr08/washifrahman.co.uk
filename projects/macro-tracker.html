@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Software for a local gym | Washif Rahman</title>
+  <meta name="description" content="A macro-nutritional tracker built in Python for the manager of a local gym. More coming soon.">
+  <meta name="color-scheme" content="light">
+  <meta name="theme-color" content="#8B9EB7">
+  <meta property="og:type" content="article">
+  <meta property="og:title" content="Software for a local gym | Washif Rahman">
+  <meta property="og:url" content="https://washifrahman.co.uk/projects/macro-tracker.html">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>☁️</text></svg>">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=Instrument+Sans:wght@400;500;600&display=swap">
+  <style>
+    :root {
+      --frame: #8B9EB7;
+      --page: #E8EDF4;
+      --hero: #2F7A57;          /* same green as this project's card, so the transition lands seamlessly */
+      --navy: #0E1A33;
+      --gold: #D4B07A;
+      --gold-line: #D8C29A;
+      --text: #0E1A33;
+      --text-muted: #5A6479;
+      --text-light: #F4F7FA;
+      --text-light-soft: #D3EADF;
+
+      --serif: "DM Serif Display", Georgia, "Times New Roman", serif;
+      --sans: "Instrument Sans", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+      --ease-out: cubic-bezier(0.2, 0.7, 0.1, 1);
+      --gap: clamp(10px, 1.8vw, 22px);
+      --pad-x: clamp(1.5rem, 6vw, 5rem);
+    }
+
+    *, *::before, *::after { box-sizing: border-box; }
+
+    html { background: var(--frame); -webkit-text-size-adjust: 100%; }
+
+    body {
+      margin: 0;
+      padding: var(--gap);
+      background: var(--frame);
+      color: var(--text);
+      font-family: var(--sans);
+      font-size: 1.0625rem;
+      line-height: 1.6;
+    }
+
+    ::selection { background: var(--gold); color: var(--navy); }
+
+    /* The page fills the screen, with the green panel taking up the space above the footer */
+    .page {
+      display: flex;
+      flex-direction: column;
+      max-width: 1240px;
+      min-height: calc(100vh - 2 * var(--gap));
+      min-height: calc(100dvh - 2 * var(--gap));
+      margin-inline: auto;
+      border-radius: 28px;
+      overflow: hidden;
+      background: var(--page);
+    }
+
+    .back-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+      color: inherit;
+      font-size: 0.95rem;
+      font-weight: 500;
+      text-decoration: none;
+    }
+
+    .back-link svg { width: 18px; height: 18px; }
+
+    .back-link:hover span { text-decoration: underline; text-underline-offset: 0.2em; }
+
+    a:focus-visible {
+      outline: 2px solid var(--gold);
+      outline-offset: 4px;
+      border-radius: 6px;
+    }
+
+    .hero {
+      display: flex;
+      flex-direction: column;
+      flex: 1;
+      padding: clamp(1.5rem, 3vw, 2.25rem) var(--pad-x) clamp(2.5rem, 5vw, 3.5rem);
+      background: var(--hero);
+      color: var(--text-light);
+    }
+
+    .hero .back-link { color: var(--text-light-soft); }
+
+    .hero h1 {
+      margin: auto 0;
+      padding: 3rem 0;
+      font-family: var(--serif);
+      font-weight: 400;
+      font-size: clamp(3rem, 9vw, 6.5rem);
+      line-height: 0.95;
+      text-align: center;
+    }
+
+    .page-footer {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: center;
+      gap: 0.75rem 1.5rem;
+      padding: 1.5rem var(--pad-x) 2rem;
+      color: var(--text-muted);
+      font-size: 0.9rem;
+    }
+
+    .page-footer .back-link { color: var(--text); }
+
+    .page-footer p { margin: 0; }
+
+    /* A cover in the card's colour fades away to reveal the page */
+    .page-cover {
+      position: fixed;
+      inset: 0;
+      z-index: 1000;
+      background: var(--hero);
+      pointer-events: none;
+    }
+
+    @media (prefers-reduced-motion: no-preference) {
+      .page-cover { animation: cover-out 0.6s ease 0.05s both; }
+      .hero > * { animation: rise-in 0.8s var(--ease-out) 0.25s both; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .page-cover { display: none; }
+    }
+
+    @keyframes cover-out {
+      to { opacity: 0; visibility: hidden; }
+    }
+
+    @keyframes rise-in {
+      from { opacity: 0; transform: translateY(12px); }
+      to { opacity: 1; transform: none; }
+    }
+  </style>
+</head>
+<body>
+  <div class="page-cover" aria-hidden="true"></div>
+
+  <div class="page">
+    <header class="hero">
+      <a class="back-link" href="../index.html#projects">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="15 6 9 12 15 18"/></svg>
+        <span>Back to home</span>
+      </a>
+
+      <h1>More coming soon</h1>
+    </header>
+
+    <footer class="page-footer">
+      <a class="back-link" href="../index.html#projects">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="15 6 9 12 15 18"/></svg>
+        <span>Back to home</span>
+      </a>
+      <p>© 2026 Washif Rahman</p>
+    </footer>
+  </div>
+</body>
+</html>
